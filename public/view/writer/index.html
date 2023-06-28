@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Markdown Editor</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.3.2/markdown-it.min.js"
+            integrity="sha512-TIDbN32lXOg2Mw1VcnKrQLZgfALryJogWCu/NHWtlMCR1jget+mOwMtdehBBZz2f9PKeK2AQPwVxkbl4u/1H5g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/github-dark-dimmed.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+
+    <link rel="stylesheet" href="/styles/writer-style.css"/>
+    <link rel="stylesheet" href="/styles/markdown-style.css"/>
+</head>
+<body>
+
+<div id="container">
+    <div id="input">
+        <div class="top-bar">
+            <div id="title" contenteditable></div>
+            <button id="post">Post</button>
+        </div>
+        <textarea id="input-text" placeholder="Type markdown here mate"></textarea>
+    </div>
+
+    <div id="renderer" class="md"></div>
+</div>
+
+<script>
+    const inputTitle = document.querySelector('#title')
+    const inputText = document.querySelector('#input-text');
+    const renderer = document.querySelector('#renderer');
+    const uploadPost = document.querySelector('#post');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id') || undefined;
+
+    const markdownIt = window.markdownit({
+        html: true,
+        linkify: true,
+        breaks: true,
+
+        highlight: function (str, lang) {
+            if (lang && hljs.getLanguage(lang)) {
+                try {
+                    return hljs.highlight(str, {language: lang}).value;
+                } catch (__) {
+                }
+            }
+            return '';
+        }
+    });
+
+    async function setPost() {
+        const res = await fetch('/api/v1/posts/' + id);
+        const jsonRes = await res.json();
+        console.log(jsonRes);
+        if (jsonRes['code'] === 404) {
+            return;
+        }
+
+        inputText.value = jsonRes['data']['content'];
+        inputTitle.innerText = jsonRes['data']['title'];
+        renderer.innerHTML = markdownIt.render(inputText.value);
+    }
+
+    inputText.addEventListener('input', async () => {
+        renderer.innerHTML = markdownIt.render(inputText.value);
+    })
+
+    async function createPost(post) {
+        const res = await fetch('/api/v1/posts', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: post
+        });
+        const jsonRes = await res.json();
+        if (jsonRes['code'] === 201) {
+            window.location.href = '/';
+            return
+        }
+
+        console.log(jsonRes);
+        alert(jsonRes['message']);
+    }
+
+    async function updatePost(post) {
+        const res = await fetch('/api/v1/posts/' + id, {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: post
+        });
+        const jsonRes = await res.json();
+        if (jsonRes['code'] === 200) {
+            window.location.href = '/';
+            return
+        }
+
+        console.log(jsonRes);
+        alert(jsonRes['message']);
+    }
+
+    uploadPost.addEventListener('click', async () => {
+        const title = inputTitle.innerText;
+        const content = inputText.value;
+        const post = JSON.stringify({
+            'title': title,
+            'content': content
+        })
+
+        if (id) {
+            await updatePost(post)
+        } else {
+            await createPost(post)
+        }
+    });
+
+    (async () => {
+        if (id) {
+            await setPost();
+        }
+    })();
+</script>
+</body>
+</html>
