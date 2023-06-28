@@ -10,6 +10,10 @@
             integrity="sha512-TIDbN32lXOg2Mw1VcnKrQLZgfALryJogWCu/NHWtlMCR1jget+mOwMtdehBBZz2f9PKeK2AQPwVxkbl4u/1H5g=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/github-dark-dimmed.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+
     <script src="https://code.jquery.com/jquery-3.6.3.slim.min.js"></script>
     <script src="/lib/lazysizes.min.js"></script>
     <script src="/lib/apiresolver.js"></script>
@@ -46,7 +50,22 @@
 </div>
 
 <script>
-    const markdownIt = window.markdownit({html: true, linkify: true});
+    const markdownIt = window.markdownit({
+        html: true,
+        linkify: true,
+        breaks: true,
+
+        highlight: function (str, lang) {
+            if (lang && hljs.getLanguage(lang)) {
+                try {
+                    return hljs.highlight(str, {language: lang}).value;
+                } catch (__) {
+                }
+            }
+            return '';
+        },
+    });
+
     const deletePost = document.querySelector('#delete-post');
     const editPost = document.querySelector('#edit-post');
 

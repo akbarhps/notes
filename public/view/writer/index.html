@@ -101,7 +101,7 @@
         });
         const jsonRes = await res.json();
         if (jsonRes['code'] === 200) {
-            window.location.href = '/';
+            window.location.href = '/posts/' + id;
             return
         }
 

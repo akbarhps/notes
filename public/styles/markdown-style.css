@@ -44,7 +44,10 @@
 .md pre {
     width: 100%;
     padding: 16px;
-    background-color: rgba(0, 0, 0, 0.2);
+    /*background-color: rgba(0, 0, 0, 0.2);*/
+    background-color: rgb(1, 4, 9);
+    border-radius: 12px;
+    line-height: 1.4rem !important;
 }
 
 .md h1,
@@ -115,11 +118,17 @@
 
 .md code {
     padding: 0.2em 0.4em;
-    color: black;
+    color: #ececec;
     font-size: 85%;
     font-weight: 400;
     font-family: var(--header-font-family);
     white-space: break-spaces;
     border-radius: 6px;
     background-color: var(--highligh-background-color);
+}
+
+.md > pre > code {
+    padding: 0;
+    font-size: 1rem;
+    font-family: Consolas, serif;
 }
