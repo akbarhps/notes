@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Akbar's Notes</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="handheldfriendly" content="true"/>
+    <meta name="MobileOptimized" content="width"/>
+    <meta name="description" content="Notes"/>
+    <meta name="author" content=""/>
+    <meta name="keywords" content="Notes"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <link rel="shortcut icon" type="image/png" href="../dist/images/logos/favicon.png"/>
+    <link id="themeColors" rel="stylesheet" href="../dist/css/style.min.css"/>
+    <script src="/elements/DropdownMenu.js"></script>
+    <script src="/elements/PostCard.js"></script>
+    <script src="/elements/TagChip.js"></script>
+
+    <style>
+        .post-title-text {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* number of lines to show */
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+    </style>
+
+</head>
+<body class="cardwithborder">
+
+<div class="page-wrapper" id="main-wrapper">
+    <div class="body-wrapper">
+        <div class="container-fluid note-has-grid">
+
+            <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+                <div class="card-body px-4 py-3">
+                    <div class="row align-items-center">
+                        <div class="col-9">
+                            <h4 class="fw-semibold mb-8">Notes</h4>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item" aria-current="page">Home</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <ul class="nav nav-pills p-3 mb-3 rounded align-items-center card flex-row"
+                style="top: 20px; position: sticky; z-index: 999">
+                <li class="nav-item ms-auto">
+                    <a href="/editor" class="btn btn-primary d-flex align-items-center px-3">
+                        <i class="ti ti-pencil fs-4"></i>
+                        <span class="d-none d-md-block font-weight-medium ms-2 fs-3">Add Notes</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="mw-100 mb-4">
+                <div class="position-relative">
+                    <input type="text" class="form-control product-search ps-5" id="input-search"
+                           placeholder="Search Notes..."/>
+                    <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
+                    <i id="clear-search" style="cursor: pointer;"
+                       class="ti ti-backspace position-absolute top-50 end-0 translate-middle-y fs-6 text-dark me-3"></i>
+                </div>
+            </div>
+
+            <div class="tab-content">
+                <div id="note-full-container" class="note-has-grid row"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="../dist/libs/jquery/dist/jquery.min.js"></script>
+<script src="../dist/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    let posts = [];
+    const urlParams = new URLSearchParams(window.location.search)
+    const page = urlParams.get('page') || 0;
+    const limit = urlParams.get('limit') || 1000;
+
+    const {get, set} = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+    const noteContainer = document.querySelector('#note-full-container');
+    const searchInput = document.querySelector('#input-search');
+
+    $('#clear-search').click(() => {
+        $('#input-search').val('');
+        filterPosts('');
+    });
+
+    function renderPosts(posts) {
+        noteContainer.innerHTML = ''
+        posts.forEach(item => {
+            noteContainer.appendChild(item);
+        });
+    }
+
+    function sortPosts() {
+        posts.sort((a, b) => {
+            if (a.isPinned && !b.isPinned) return -1;
+            if (!a.isPinned && b.isPinned) return 1;
+            if (a.createdAt < b.createdAt) return 1;
+            if (a.createdAt > b.createdAt) return -1;
+            return 0;
+        });
+        renderPosts(posts);
+    }
+
+    function filterPosts(keyword) {
+        const value = keyword.toLowerCase();
+        const filteredPosts = posts.filter(item => {
+            const title = item.title.toLowerCase();
+            const tags = item.tags.join(", ").toLowerCase();
+            return title.includes(value) || tags.includes(value);
+        });
+        renderPosts(filteredPosts);
+    }
+
+    Object.defineProperty(searchInput, 'value', {
+        get() {
+            return get.call(this);
+        },
+        set(newVal) {
+            filterPosts(newVal);
+            return set.call(this, newVal);
+        }
+    });
+
+    searchInput.addEventListener('keyup', (e) => {
+        const keyword = e.target.value.toLowerCase();
+        filterPosts(keyword);
+    });
+
+    (async () => {
+        const res = await fetch('/api/v1/posts?page=' + page + '&limit=' + limit);
+        const resJSON = await res.json();
+        resJSON['data'].forEach(item => {
+            const post = new PostCard(item);
+            posts.push(post);
+            noteContainer.appendChild(post);
+
+            post.setOnDeleteCallback((e, response) => {
+                posts = posts.filter(post => post.id !== item.id);
+                noteContainer.removeChild(post);
+            });
+
+            post.setOnTogglePinCallback((e, response) => {
+                const isPinned = response['data']['isPinned'];
+                const menuIcon = e.firstChild;
+                const menuText = e.lastChild;
+
+                menuIcon.className = 'fs-4 ti ti-pin' + (isPinned ? 'ned-off' : '');
+                menuText.innerText = isPinned ? 'Unpin' : 'Pin';
+                sortPosts();
+            });
+        })
+    })();
+</script>
+</body>
+</html>

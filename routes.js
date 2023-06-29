@@ -23,7 +23,7 @@ apiRouter.post('/posts', async (req, res, next) => {
         const post = await service.createPost(req.body);
         res.status(201).json({
             'code': 201,
-            'status': 'created',
+            'status': 'ok',
             'message': 'Post created successfully',
             'data': post
         });
@@ -52,6 +52,20 @@ apiRouter.put('/posts/:id', async (req, res, next) => {
             'code': 200,
             'status': 'ok',
             'message': 'Post updated successfully',
+            'data': post
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
+apiRouter.put('/posts/:id/pin', async (req, res, next) => {
+    try {
+        const post = await service.togglePostPin(req.params.id);
+        res.status(200).json({
+            'code': 200,
+            'status': 'ok',
+            'message': 'Post pinned successfully',
             'data': post
         });
     } catch (err) {

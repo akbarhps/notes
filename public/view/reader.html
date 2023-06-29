@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="handheldfriendly" content="true"/>
+    <meta name="MobileOptimized" content="width"/>
+    <meta name="description" content="Akbar's Note App"/>
+    <meta name="author" content=""/>
+    <meta name="keywords" content="Akbar's Note"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link rel="shortcut icon" type="image/png" href="../dist/images/logos/favicon.png"/>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.3.2/markdown-it.min.js"
+            integrity="sha512-TIDbN32lXOg2Mw1VcnKrQLZgfALryJogWCu/NHWtlMCR1jget+mOwMtdehBBZz2f9PKeK2AQPwVxkbl4u/1H5g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/github-dark-dimmed.min.css">
+
+    <link rel="stylesheet" href="/styles/markdown-style.css"/>
+    <link id="themeColors" rel="stylesheet" href="../dist/css/style.min.css"/>
+
+    <style>
+        ul {
+            list-style: inherit !important;
+        }
+
+        .nav-item {
+            list-style: none !important;
+        }
+
+        code {
+            text-shadow: none !important;
+        }
+    </style>
+</head>
+
+<body class="cardwithborder" style="overflow-y: scroll">
+
+<div class="page-wrapper" id="main-wrapper">
+
+    <div class="body-wrapper">
+        <div class="container-fluid">
+            <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+                <div class="card-body px-4 py-3">
+                    <div class="row align-items-center">
+                        <div class="col-9">
+                            <h4 class="fw-semibold mb-8">Reader</h4>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a class="text-muted" href="/">Home</a></li>
+                                    <li class="breadcrumb-item" aria-current="page">Reader</li>
+                                </ol>
+                            </nav>
+                        </div>
+                        <div class="col-3">
+                            <div class="text-center mb-n5">
+                                <!--                                <img src="../dist/images/breadcrumb/ChatBc.png" alt="" class="img-fluid mb-n4">-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="nav nav-pills p-3 mb-4 rounded align-items-center card flex-row">
+                <li class="nav-item ms-auto">
+                    <div id="btn-delete"
+                         style="cursor:pointer;"
+                         class=" nav-link note-link d-flex align-items-center justify-content-center px-3 px-md-3 me-0 me-md-2 text-body-color">
+                        <i class="ti ti-trash fill-white"></i>
+                        <span class="d-none d-md-block font-weight-medium ms-2" style="font-size: 0.9rem">Delete</span>
+                    </div>
+                </li>
+
+                <li class="nav-item ms-1">
+                    <div id="btn-edit" style="cursor:pointer;"
+                         class="nav-link note-link d-flex align-items-center justify-content-center active px-3 px-md-3 me-0 me-md-2 text-body-color">
+                        <i class="ti ti-pencil fill-white"></i>
+                        <span class="d-none d-md-block font-weight-medium ms-2" style="font-size: 0.9rem">Edit</span>
+                    </div>
+                </li>
+            </ul>
+
+            <section id="section-preview">
+                <div class="card rounded-2 overflow-hidden">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="d-flex align-items-center fs-2 ms-auto">
+                                <i class="ti ti-point text-dark"></i>
+                                <span id="preview-date"></span>
+                            </div>
+                        </div>
+                        <div id="preview-tags"></div>
+                        <h2 id="preview-title" class="fs-9 fw-semibold my-4"></h2>
+                    </div>
+
+                    <div id="preview-content" class="md card-body border-top p-4"></div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+<script src="../dist/libs/jquery/dist/jquery.min.js"></script>
+<script src="../dist/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const url = new URL(window.location);
+    const urlSplit = url.pathname.split('/');
+    const postId = urlSplit[urlSplit.length - 1];
+
+    const previewTitle = $('#preview-title');
+    const previewTags = document.querySelector('#preview-tags');
+    const previewDate = $('#preview-date');
+    const previewContent = $('#preview-content');
+
+    const markdownIt = window.markdownit({
+        html: true,
+        linkify: true,
+        breaks: true,
+
+        highlight: function (str, lang) {
+            if (lang && hljs.getLanguage(lang)) {
+                try {
+                    return hljs.highlight(str, {language: lang}).value;
+                } catch (__) {
+                }
+            }
+            return '';
+        }
+    });
+</script>
+
+<script>
+    function updateState(data) {
+        document.title = data['title'];
+        previewTitle.text(data['title']);
+        previewDate.text(data['createdAt']);
+        previewContent.html(markdownIt.render(data['content']));
+
+        data['tags'].split(',').forEach(tag => {
+            const tagContent = tag.trim();
+            previewTags.innerHTML +=
+                `<a href="/tags/${tagContent}" class="badge text-bg-light py-1 px-2 lh-sm mt-3 ms-2">${tagContent}</a>`;
+        });
+    }
+
+    (async () => {
+        const res = await fetch(`/api/v1/posts/${postId}`);
+        const jsonData = await res.json();
+        if (jsonData['code'] === 404) {
+            window.location.href = '/';
+            return;
+        }
+
+        $('#btn-delete').click(() => {
+            if (confirm('Are you sure you want to delete this post?')) {
+                fetch(`/api/v1/posts/${postId}`, {
+                    method: 'DELETE',
+                }).then(res => {
+                    if (res.status === 200) {
+                        window.location.href = '/';
+                        return;
+                    }
+
+                    console.error(res);
+                    alert(res['message']);
+                }).catch(err => {
+                    console.error(err);
+                    alert('An error occurred while deleting the post.');
+                });
+            }
+        });
+
+        $('#btn-edit').click(() => {
+            window.location.href = `/editor?id=${postId}`;
+        });
+
+        updateState(jsonData['data']);
+    })();
+</script>
+
+</body>
+</html>
