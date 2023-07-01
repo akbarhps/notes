@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Akbar's Notes</title>
+    <title>Notes</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="handheldfriendly" content="true"/>
@@ -13,7 +13,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
 <!--    <link rel="shortcut icon" type="image/png" href="../dist/images/logos/favicon.png"/>-->
-    <link id="themeColors" rel="stylesheet" href="../dist/css/style.min.css"/>
+    <link id="themeColors" rel="stylesheet" href="/dist/css/style-dark.min.css"/>
     <script src="/elements/DropdownMenu.js"></script>
     <script src="/elements/PostCard.js"></script>
     <script src="/elements/TagChip.js"></script>
@@ -79,14 +79,15 @@
     </div>
 </div>
 
-<script src="../dist/libs/jquery/dist/jquery.min.js"></script>
-<script src="../dist/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/dist/libs/jquery/dist/jquery.min.js"></script>
+<script src="/dist/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     let posts = [];
     const urlParams = new URLSearchParams(window.location.search)
     const page = urlParams.get('page') || 0;
     const limit = urlParams.get('limit') || 1000;
+    const query = urlParams.get('query') || null;
 
     const {get, set} = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
     const noteContainer = document.querySelector('#note-full-container');
@@ -143,6 +144,7 @@
     (async () => {
         const res = await fetch('/api/v1/posts?page=' + page + '&limit=' + limit);
         const resJSON = await res.json();
+
         resJSON['data'].forEach(item => {
             const post = new PostCard(item);
             posts.push(post);
@@ -162,7 +164,11 @@
                 menuText.innerText = isPinned ? 'Unpin' : 'Pin';
                 sortPosts();
             });
-        })
+        });
+
+        if (query) {
+            searchInput.value = query;
+        }
     })();
 </script>
 </body>

@@ -21,8 +21,8 @@
     <link rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/github-dark-dimmed.min.css">
 
-    <link rel="stylesheet" href="/styles/markdown-style.css"/>
-    <link id="themeColors" rel="stylesheet" href="../dist/css/style.min.css"/>
+    <link rel="stylesheet" href="/dist/css/markdown-style.css"/>
+    <link id="themeColors" rel="stylesheet" href="/dist/css/style-dark.min.css"/>
 
     <style>
         ul {
@@ -140,7 +140,7 @@
         data['tags'].split(',').forEach(tag => {
             const tagContent = tag.trim();
             previewTags.innerHTML +=
-                `<a href="/tags/${tagContent}" class="badge text-bg-light py-1 px-2 lh-sm mt-3 ms-2">${tagContent}</a>`;
+                `<a href="/?query=${tagContent}" class="badge text-bg-light py-1 px-2 lh-sm mt-3 ms-2">${tagContent}</a>`;
         });
     }
 

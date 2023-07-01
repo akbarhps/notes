@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100;8..144,200;8..144,300;8..144,400;8..144,500;8..144,600;8..144,700;8..144,800;8..144,900;8..144,1000&family=Roboto+Mono:wght@300&family=Source+Serif+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap');
 
 :root {
-    --header-font-family: "Source Serif Pro", 'Times New Roman', Times, serif;
+    --header-font-family: "Source Serif Pro";
     --header-font-color: black;
 
     --h1-font-size: 2.5rem;
     --h2-font-size: 2.3rem;
     --h3-font-size: 2.1rem;
 
-    --meta-font-family: "Roboto Mono", 'Courier New', Courier, monospace;
+    --meta-font-family: "Roboto Mono";
 
     --default-font-family: "Roboto Flex", 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     --default-font-size: 1.2rem;
@@ -106,14 +106,14 @@
 
 .md code {
     padding: 0.2em 0.4em;
-    color: black;
+    color: #d7d7d7;
     font-size: 85%;
     font-weight: 400;
-    font-family: var(--header-font-family);
+    font-family: var(--meta-font-family);
     white-space: break-spaces;
     border-radius: 6px;
     text-shadow: none !important;
-    background-color: rgba(255, 255, 0, 0.4) !important;
+    background-color: rgba(57, 85, 150, 0.5) !important;
 }
 
 .md p {
@@ -131,7 +131,7 @@
 
 .md > pre > code {
     padding: 0;
-    color: #ececec;
+    color: #d7d7d7;
     font-size: 1rem;
     font-family: Consolas, serif;
     background-color: unset !important;
