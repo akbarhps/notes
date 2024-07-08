@@ -10,5 +10,8 @@ Kalo gabut nanti di tambahin lagi, kalo engga ya gatau hehe
 1. ## Git
    1. [Git Basic Commands](contents/git/git_basic-commands.md)
 
+1. ## Makefile
+   1. [Makefile Config Example](contents/makefile/makefile_config-example)
+
 1. ## Android
    1. [Android Set Proxy in Gradle](contents/android/android_set-gradle-proxy.md)
