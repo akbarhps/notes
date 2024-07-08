@@ -13,6 +13,9 @@ Kalo gabut nanti di tambahin lagi, kalo engga ya gatau hehe
 1. ## Makefile
    1. [Makefile Config Example](contents/makefile/makefile_config-example.md)
 
+1. ## Powershell
+   1. [Powershell Profile](contents/powershell/powershell_profile.md)
+
 1. ## Nginx
    1. [Nginx Laravel Configuration](contents/nginx/nginx_laravel-config.md)
 
