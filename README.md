@@ -13,5 +13,8 @@ Kalo gabut nanti di tambahin lagi, kalo engga ya gatau hehe
 1. ## Makefile
    1. [Makefile Config Example](contents/makefile/makefile_config-example.md)
 
+1. ## Nginx
+   1. [Nginx Laravel Configuration](contents/nginx/nginx_laravel-config.md)
+
 1. ## Android
    1. [Android Set Proxy in Gradle](contents/android/android_set-gradle-proxy.md)
