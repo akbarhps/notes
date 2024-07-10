@@ -22,3 +22,6 @@ Kalo gabut nanti di tambahin lagi, kalo engga ya gatau hehe
 
 1. ## Android
    1. [Android Set Proxy in Gradle](contents/android/android_set-gradle-proxy.md)
+
+1. ## Laravel
+   1. [Laravel JWT](contents/laravel/laravel_jwt.md)
