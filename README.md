@@ -25,3 +25,4 @@ Kalo gabut nanti di tambahin lagi, kalo engga ya gatau hehe
 
 1. ## Laravel
    1. [Laravel JWT](contents/laravel/laravel_jwt.md)
+   1. [Laravel Queue](contents/laravel/laravel_queue.md)
